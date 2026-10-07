@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Eagles Pool League — 2026–27 Interactive Schedule</title>
+<style>
+:root {
+  --navy:#173f5f; --blue:#20639b; --gold:#f4c542; --cream:#fff8df;
+  --green:#dff0d8; --orange:#fce4d6; --bg:#f4f7fa; --text:#17202a;
+  --border:#d9e1e8;
+}
+*{box-sizing:border-box}
+body{font-family:Arial,Helvetica,sans-serif;margin:0;background:var(--bg);color:var(--text);font-size:17px}
+header{background:var(--navy);color:#fff;padding:28px 18px;text-align:center}
+h1{margin:0;font-size:32px;line-height:1.15}
+.sub{margin-top:8px;font-size:17px}
+.wrap{max-width:1180px;margin:20px auto;padding:0 16px}
+.hero{background:var(--cream);border-left:8px solid var(--gold);padding:18px 20px;border-radius:12px;margin-bottom:16px;line-height:1.55}
+.hero strong{font-size:19px}
+.controls{display:grid;grid-template-columns:1.1fr 1fr 1fr 1.4fr;gap:12px;background:#fff;padding:16px;border-radius:12px;box-shadow:0 2px 10px #0001;margin-bottom:18px}
+label{display:block;font-weight:700;font-size:14px;margin-bottom:5px}
+select,input{width:100%;padding:13px 12px;border:2px solid #cbd5df;border-radius:8px;font-size:16px;background:#fff}
+.date-card{background:#fff;border-radius:14px;overflow:hidden;margin:18px 0;box-shadow:0 2px 10px #0001;border:1px solid var(--border)}
+.date-head{background:var(--navy);color:#fff;padding:14px 18px;font-size:22px;font-weight:800;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.game-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0}
+.game{padding:17px 18px;border-bottom:1px solid #e8edf1;min-height:120px}
+.game:nth-child(odd){border-right:1px solid #e8edf1}
+.game:last-child,.game:nth-last-child(2):nth-child(odd){border-bottom:0}
+.matchup{font-size:21px;font-weight:800;line-height:1.3;margin-bottom:9px}
+.vs{font-weight:500;color:#6b7280}
+.loc{font-size:17px;font-weight:700}
+.addr{font-size:14px;color:#5d6873;margin-top:4px;line-height:1.35}
+.eagles-game{background:var(--cream)}
+.site-tag{display:inline-block;padding:4px 8px;border-radius:14px;background:var(--gold);color:#222;font-size:12px;font-weight:800;margin-left:7px;vertical-align:middle}
+.same-site{font-size:14px;color:#5a4a00;background:#fff1a8;padding:7px 9px;border-radius:7px;margin-top:8px;font-weight:700}
+.bye{background:var(--orange);padding:13px 16px;border-radius:10px;margin:10px 0;font-weight:700}
+.legend{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 14px}
+.legend span{padding:7px 10px;border-radius:8px;font-size:14px;font-weight:700}
+.legend .lg{background:var(--cream)} .legend .lb{background:var(--green)} .legend .lo{background:var(--orange)}
+.empty{padding:35px;text-align:center;background:#fff;border-radius:12px;font-weight:700}
+.count{font-size:14px;font-weight:600;opacity:.9}
+@media(max-width:800px){.controls{grid-template-columns:1fr 1fr} .game-grid{grid-template-columns:1fr} .game:nth-child(odd){border-right:0}}
+@media(max-width:520px){body{font-size:18px}h1{font-size:27px}.controls{grid-template-columns:1fr}.date-head{font-size:19px}.matchup{font-size:20px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🦅 Eagles Pool League</h1>
+  <div class="sub">2026–27 Interactive League Schedule • Both Eagles Sites</div>
+</header>
+<div class="wrap">
+  <div class="hero">
+    <strong>📍 EAGLES HOME LOCATION</strong><br>
+    Eagles • 220 Wells Ave S, Renton, WA 98057<br>
+    <span>Built for easy viewing on phones, tablets and computers. Use the filters below to show the full league or either Eagles team.</span>
+  </div>
+
+  <div class="legend">
+    <span class="lg">🦅 Eagles-site game</span>
+    <span class="lb">📍 Location</span>
+    <span class="lo">⏸️ Bye / no match</span>
+  </div>
+
+  <div class="controls">
+    <div><label for="site">Eagles Site</label>
+      <select id="site">
+        <option value="all">All Teams / Full League</option>
+        <option value="Eagles Nest">Eagles Nest</option>
+        <option value="Eagles 1">Eagles 1</option>
+      </select>
+    </div>
+    <div><label for="date">Date</label><select id="date"><option value="">All Dates</option></select></div>
+    <div><label for="loc">Location</label><select id="loc"><option value="">All Locations</option></select></div>
+    <div><label for="q">Search</label><input id="q" placeholder="Search team, location, address..."></div>
+  </div>
+
+  <div id="schedule"></div>
+</div>
+
+<script>
+const rows = [{"date": "2026-10-07", "display": "Wed, Oct 7, 2026", "away": "Popcorn", "home": "Project 8", "loc": "Pickled Onion", "addr": "1314 Union Ave NE, Suite 6, Renton, WA 98059", "eagles": false, "away_no": 2, "home_no": 1}, {"date": "2026-10-07", "display": "Wed, Oct 7, 2026", "away": "OG's", "home": "Eagles Nest", "loc": "Eagles", "addr": "220 Wells Ave S, Renton, WA 98057", "eagles": true, "away_no": 4, "home_no": 9}, {"date": "2026-10-07", "display": "Wed, Oct 7, 2026", "away": "Sinful Strokes", "home": "Old School Players", "loc": "JP's Barroom", "addr": "214 Williams Ave S, Renton, WA 98057", "eagles": false, "away_no": 5, "home_no": 8}, {"date": "2026-10-07", "display": "Wed, Oct 7, 2026", "away": "Doofers II", "home": "Duck Fitty", "loc": "Christys", "addr": "1055 NE Sunset Blvd, Renton, WA 98056", "eagles": false, "away_no": 6, "home_no": 7}, {"date": "2026-10-14", "display": "Wed, Oct 14, 2026", "away": "Popcorn", "home": "Eagles 1", "loc": "Eagles", "addr": "220 Wells Ave S, Renton, WA 98057", "eagles": false, "away_no": 2, "home_no": 3}, {"date": "2026-10-14", "display": "Wed, Oct 14, 2026", "away": "Project 8", "home": "Duck Fitty", "loc": "Christys", "addr": "1055 NE Sunset Blvd, Renton, WA 98056", "eagles": false, "away_no": 1, "home_no": 7}, {"date": "2026-10-14", "display": "Wed, Oct 14, 2026", "away": "Old School Players", "home": "Doofers II", "loc": "Doofers", "addr": "16430 SE 128th St, Renton, WA 98059", "eagles": false, "away_no": 8, "home_no": 6}, {"date": "2026-10-14", "display": "Wed, Oct 14, 2026", "away": "Eagles Nest", "home": "Sinful Strokes", "loc": "Pickled Onion", "addr": "1314 Union Ave NE, Suite 6, Renton, WA 98059", "eagles": true, "away_no": 9, "home_no": 5}, {"date": "2026-10-21", "display": "Wed, Oct 21, 2026", "away": "Doofers II", "home": "Eagles Nest", "loc": "Eagles", "addr": "220 Wells Ave S, Renton, WA 98057", "eagles": true, "away_no": 6, "home_no": 9}, {"date": "2026-10-21", "display": "Wed, Oct 21, 2026", "away": "Duck Fitty", "home": "Old School Players", "loc": "JP's Barroom", "addr": "214 Williams Ave S, Renton, WA 98057", "eagles": false, "away_no": 7, "home_no": 8}, {"date": "2026-10-21", "display": "Wed, Oct 21, 2026", "away": "Eagles 1", "home": "Project 8", "loc": "Pickled Onion", "addr": "1314 Union Ave NE, Suite 6, Renton, WA 98059", "eagles": false, "away_no": 3, "home_no": 1}, {"date": "2026-10-21", "display": "Wed, Oct 21, 2026", "away": "OG's", "home": "Popcorn", "loc": "High Dive", "addr": "2621 NE Sunset Blvd, Renton, WA 98056", "eagles": false, "away_no": 4, "home_no": 2}, {"date": "2026-10-28", "display": "Wed, Oct 28, 2026", "away": "Popcorn", "home": "Sinful Strokes", "loc": "Pickled Onion", "addr": "1314 Union Ave NE, Suite 6, Renton, WA 98059", "eagles": false, "away_no": 2, "home_no": 5}, {"date": "2026-10-28", "display": "Wed, Oct 28, 2026", "away": "Eagles 1", "home": "OG's", "loc": "JP's Barroom", "addr": "214 Williams Ave S, Renton, WA 98057", "eagles": false, "away_no": 3, "home_no": 4}, {"date": "2026-10-28", "display": "Wed, Oct 28, 2026", "away": "Old School Players", "home": "Project 8", "loc": "Pickled Onion", "addr": "1314 Union Ave NE, Suite 6, Renton, WA 98059", "eagles": false, "away_no": 8, "home_no": 1}, {"date": "2026-10-28", "display": "Wed, Oct 28, 2026", "away": "Duck Fitty", "home": "Eagles Nest", "loc": "Eagles", "addr": "220 Wells Ave S, Renton, WA 98057", "eagles": true, "away_no": 7, "home_no": 9}, {"date": "2026-11-04", "display": "Wed, Nov 4, 2026", "away": "Sinful Strokes", "home": "Eagles 1", "loc": "Eagles", "addr": "220 Wells Ave S, Renton, WA 98057", "eagles": false, "away_no": 5, "home_no": 3}, {"date": "2026-11-04", "display": "Wed, Nov 4, 2026", "away": "Doofers II", "home": "Popcorn", "loc": "High Dive", "addr": "2621 NE Sunset Blvd, Renton, WA 98056", "eagles": false, "away_no": 6, "home_no": 2}, {"date": "2026-11-04", "display": "Wed, Nov 4, 2026", "away": "Eagles Nest", "home": "Old School Players", "loc": "JP's Barroom", "addr": "214 Williams Ave S, Renton, WA 98057", "eagles": true, "away_no": 9, "home_no": 8}, {"date": "2026-11-04", "display": "Wed, Nov 4, 2026", "away": "OG's", "home": "Project 8", "loc": "Pickled Onion", "addr": "1314 Union Ave NE, Suite 6, Renton, WA 98059", "eagles": false, "away_no": 4, "home_no": 1}, {"date": "2026-11-11", "display": "Wed, Nov 11, 2026", "away": "Project 8", "home": "Eagles Nest", "loc": "Eagles", "addr": "220 Wells Ave S, Renton, WA 98057", "eagles": true, "away_no": 1, "home_no": 9}, {"date": "2026-11-11", "display": "Wed, Nov 11, 2026", "away": "Popcorn", "home": "Duck Fitty", "loc": "Christys", "addr": "1055 NE Sunset Blvd, Renton, WA 98056", "eagles": false, "away_no": 2, "home_no": 7}, {"date": "2026-11-11", "display": "Wed, Nov 11, 2026", "away": "Eagles 1", "home": "Doofers II", "loc": "Doofers", "addr": "16430 SE 128th St, Renton, WA 98059", "eagles": false, "away_no": 3, "home_no": 6}, {"date": "2026-11-11", "display": "Wed, Nov 11, 2026", "away": "OG's", "home": "Sinful Strokes", "loc": "Pickled Onion", "addr": "1314 Union Ave NE, Suite 6, Renton, WA 98059", "eagles": false, "away_no": 4, "home_no": 5}, {"date": "2026-11-18", "display": "Wed, Nov 18, 2026", "away": "Sinful Strokes", "home": "Project 8", "loc": "Pickled Onion", "addr": "1314 Union Ave NE, Suite 6, Renton, WA 98059", "eagles": false, "away_no": 5, "home_no": 1}, {"date": "2026-11-18", "display": "Wed, Nov 18, 2026", "away": "Doofers II", "home": "OG's", "loc": "JP's Barroom", "addr": "214 Williams Ave S, Renton, WA 98057", "eagles": false, "away_no": 6, "home_no": 4}, {"date": "2026-11-18", "display": "Wed, Nov 18, 2026", "away": "Duck Fitty", "home": "Eagles 1", "loc": "Eagles", "addr": "220 Wells Ave S, Renton, WA 98057", "eagles": false, "away_no": 7, "home_no": 3}, {"date": "2026-11-18", "display": "Wed, Nov 18, 2026", "away": "Old School Players", "home": "Popcorn", "loc": "High Dive", "addr": "2621 NE Sunset Blvd, Renton, WA 98056", "eagles": false, "away_no": 8, "home_no": 2}, {"date": "2026-12-02", "display": "Wed, Dec 2, 2026", "away": "Sinful Strokes", "home": "Doofers II", "loc": "Doofers", "addr": "16430 SE 128th St, Renton, WA 98059", "eagles": false, "away_no": 5, "home_no": 6}, {"date": "2026-12-02", "display": "Wed, Dec 2, 2026", "away": "Popcorn", "home": "Eagles Nest", "loc": "Eagles", "addr": "220 Wells Ave S, Renton, WA 98057", "eagles": true, "away_no": 2, "home_no": 9}, {"date": "2026-12-02", "display": "Wed, Dec 2, 2026", "away": "Eagles 1", "home": "Old School Players", "loc": "JP's Barroom", "addr": "214 Williams Ave S, Renton, WA 98057", "eagles": false, "away_no": 3, "home_no": 8}, {"date": "2026-12-02", "display": "Wed, Dec 2, 2026", "away": "OG's", "home": "Duck Fitty", "loc": "Christys", "addr": "1055 NE Sunset Blvd, Renton, WA 98056", "eagles": false, "away_no": 4, "home_no": 7}, {"date": "2026-12-09", "display": "Wed, Dec 9, 2026", "away": "Eagles Nest", "home": "Eagles 1", "loc": "Eagles", "addr": "220 Wells Ave S, Renton, WA 98057", "eagles": true, "away_no": 9, "home_no": 3}, {"date": "2026-12-09", "display": "Wed, Dec 9, 2026", "away": "Doofers II", "home": "Project 8", "loc": "Pickled Onion", "addr": "1314 Union Ave NE, Suite 6, Renton, WA 98059", "eagles": false, "away_no": 6, "home_no": 1}, {"date": "2026-12-09", "display": "Wed, Dec 9, 2026", "away": "Duck Fitty", "home": "Sinful Strokes", "loc": "Pickled Onion", "addr": "1314 Union Ave NE, Suite 6, Renton, WA 98059", "eagles": false, "away_no": 7, "home_no": 5}, {"date": "2026-12-09", "display": "Wed, Dec 9, 2026", "away": "Old School Players", "home": "OG's", "loc": "JP's Barroom", "addr": "214 Williams Ave S, Renton, WA 98057", "eagles": false, "away_no": 8, "home_no": 4}, {"date": "2026-12-16", "display": "Wed, Dec 16, 2026", "away": "Project 8", "home": "Popcorn", "loc": "High Dive", "addr": "2621 NE Sunset Blvd, Renton, WA 98056", "eagles": false, "away_no": 1, "home_no": 2}, {"date": "2026-12-16", "display": "Wed, Dec 16, 2026", "away": "Eagles Nest", "home": "OG's", "loc": "JP's Barroom", "addr": "214 Williams Ave S, Renton, WA 98057", "eagles": true, "away_no": 9, "home_no": 4}, {"date": "2026-12-16", "display": "Wed, Dec 16, 2026", "away": "Old School Players", "home": "Sinful Strokes", "loc": "Pickled Onion", "addr": "1314 Union Ave NE, Suite 6, Renton, WA 98059", "eagles": false, "away_no": 8, "home_no": 5}, {"date": "2026-12-16", "display": "Wed, Dec 16, 2026", "away": "Duck Fitty", "home": "Doofers II", "loc": "Doofers", "addr": "16430 SE 128th St, Renton, WA 98059", "eagles": false, "away_no": 7, "home_no": 6}, {"date": "2027-01-06", "display": "Wed, Jan 6, 2027", "away": "Eagles 1", "home": "Popcorn", "loc": "High Dive", "addr": "2621 NE Sunset Blvd, Renton, WA 98056", "eagles": false, "away_no": 3, "home_no": 2}, {"date": "2027-01-06", "display": "Wed, Jan 6, 2027", "away": "Duck Fitty", "home": "Project 8", "loc": "Pickled Onion", "addr": "1314 Union Ave NE, Suite 6, Renton, WA 98059", "eagles": false, "away_no": 7, "home_no": 1}, {"date": "2027-01-06", "display": "Wed, Jan 6, 2027", "away": "Doofers II", "home": "Old School Players", "loc": "JP's Barroom", "addr": "214 Williams Ave S, Renton, WA 98057", "eagles": false, "away_no": 6, "home_no": 8}, {"date": "2027-01-06", "display": "Wed, Jan 6, 2027", "away": "Sinful Strokes", "home": "Eagles Nest", "loc": "Eagles", "addr": "220 Wells Ave S, Renton, WA 98057", "eagles": true, "away_no": 5, "home_no": 9}, {"date": "2027-01-13", "display": "Wed, Jan 13, 2027", "away": "Eagles Nest", "home": "Doofers II", "loc": "Doofers", "addr": "16430 SE 128th St, Renton, WA 98059", "eagles": true, "away_no": 9, "home_no": 6}, {"date": "2027-01-13", "display": "Wed, Jan 13, 2027", "away": "Old School Players", "home": "Duck Fitty", "loc": "Christys", "addr": "1055 NE Sunset Blvd, Renton, WA 98056", "eagles": false, "away_no": 8, "home_no": 7}, {"date": "2027-01-13", "display": "Wed, Jan 13, 2027", "away": "Project 8", "home": "Eagles 1", "loc": "Eagles", "addr": "220 Wells Ave S, Renton, WA 98057", "eagles": false, "away_no": 1, "home_no": 3}, {"date": "2027-01-13", "display": "Wed, Jan 13, 2027", "away": "Popcorn", "home": "OG's", "loc": "JP's Barroom", "addr": "214 Williams Ave S, Renton, WA 98057", "eagles": false, "away_no": 2, "home_no": 4}, {"date": "2027-01-20", "display": "Wed, Jan 20, 2027", "away": "Sinful Strokes", "home": "Popcorn", "loc": "High Dive", "addr": "2621 NE Sunset Blvd, Renton, WA 98056", "eagles": false, "away_no": 5, "home_no": 2}, {"date": "2027-01-20", "display": "Wed, Jan 20, 2027", "away": "OG's", "home": "Eagles 1", "loc": "Eagles", "addr": "220 Wells Ave S, Renton, WA 98057", "eagles": false, "away_no": 4, "home_no": 3}, {"date": "2027-01-20", "display": "Wed, Jan 20, 2027", "away": "Project 8", "home": "Old School Players", "loc": "JP's Barroom", "addr": "214 Williams Ave S, Renton, WA 98057", "eagles": false, "away_no": 1, "home_no": 8}, {"date": "2027-01-20", "display": "Wed, Jan 20, 2027", "away": "Eagles Nest", "home": "Duck Fitty", "loc": "Christys", "addr": "1055 NE Sunset Blvd, Renton, WA 98056", "eagles": true, "away_no": 9, "home_no": 7}, {"date": "2027-01-27", "display": "Wed, Jan 27, 2027", "away": "Eagles 1", "home": "Sinful Strokes", "loc": "Pickled Onion", "addr": "1314 Union Ave NE, Suite 6, Renton, WA 98059", "eagles": false, "away_no": 3, "home_no": 5}, {"date": "2027-01-27", "display": "Wed, Jan 27, 2027", "away": "Popcorn", "home": "Doofers II", "loc": "Doofers", "addr": "16430 SE 128th St, Renton, WA 98059", "eagles": false, "away_no": 2, "home_no": 6}, {"date": "2027-01-27", "display": "Wed, Jan 27, 2027", "away": "Old School Players", "home": "Eagles Nest", "loc": "Eagles", "addr": "220 Wells Ave S, Renton, WA 98057", "eagles": true, "away_no": 8, "home_no": 9}, {"date": "2027-01-27", "display": "Wed, Jan 27, 2027", "away": "Project 8", "home": "OG's", "loc": "JP's Barroom", "addr": "214 Williams Ave S, Renton, WA 98057", "eagles": false, "away_no": 1, "home_no": 4}, {"date": "2027-02-03", "display": "Wed, Feb 3, 2027", "away": "Eagles Nest", "home": "Project 8", "loc": "Pickled Onion", "addr": "1314 Union Ave NE, Suite 6, Renton, WA 98059", "eagles": true, "away_no": 9, "home_no": 1}, {"date": "2027-02-03", "display": "Wed, Feb 3, 2027", "away": "Duck Fitty", "home": "Popcorn", "loc": "High Dive", "addr": "2621 NE Sunset Blvd, Renton, WA 98056", "eagles": false, "away_no": 7, "home_no": 2}, {"date": "2027-02-03", "display": "Wed, Feb 3, 2027", "away": "Doofers II", "home": "Eagles 1", "loc": "Eagles", "addr": "220 Wells Ave S, Renton, WA 98057", "eagles": false, "away_no": 6, "home_no": 3}, {"date": "2027-02-03", "display": "Wed, Feb 3, 2027", "away": "Sinful Strokes", "home": "OG's", "loc": "JP's Barroom", "addr": "214 Williams Ave S, Renton, WA 98057", "eagles": false, "away_no": 5, "home_no": 4}, {"date": "2027-02-10", "display": "Wed, Feb 10, 2027", "away": "Project 8", "home": "Sinful Strokes", "loc": "Pickled Onion", "addr": "1314 Union Ave NE, Suite 6, Renton, WA 98059", "eagles": false, "away_no": 1, "home_no": 5}, {"date": "2027-02-10", "display": "Wed, Feb 10, 2027", "away": "OG's", "home": "Doofers II", "loc": "Doofers", "addr": "16430 SE 128th St, Renton, WA 98059", "eagles": false, "away_no": 4, "home_no": 6}, {"date": "2027-02-10", "display": "Wed, Feb 10, 2027", "away": "Eagles 1", "home": "Duck Fitty", "loc": "Christys", "addr": "1055 NE Sunset Blvd, Renton, WA 98056", "eagles": false, "away_no": 3, "home_no": 7}, {"date": "2027-02-10", "display": "Wed, Feb 10, 2027", "away": "Popcorn", "home": "Old School Players", "loc": "JP's Barroom", "addr": "214 Williams Ave S, Renton, WA 98057", "eagles": false, "away_no": 2, "home_no": 8}, {"date": "2027-02-17", "display": "Wed, Feb 17, 2027", "away": "Doofers II", "home": "Sinful Strokes", "loc": "Pickled Onion", "addr": "1314 Union Ave NE, Suite 6, Renton, WA 98059", "eagles": false, "away_no": 6, "home_no": 5}, {"date": "2027-02-17", "display": "Wed, Feb 17, 2027", "away": "Eagles Nest", "home": "Popcorn", "loc": "High Dive", "addr": "2621 NE Sunset Blvd, Renton, WA 98056", "eagles": true, "away_no": 9, "home_no": 2}, {"date": "2027-02-17", "display": "Wed, Feb 17, 2027", "away": "Old School Players", "home": "Eagles 1", "loc": "Eagles", "addr": "220 Wells Ave S, Renton, WA 98057", "eagles": false, "away_no": 8, "home_no": 3}, {"date": "2027-02-17", "display": "Wed, Feb 17, 2027", "away": "Duck Fitty", "home": "OG's", "loc": "JP's Barroom", "addr": "214 Williams Ave S, Renton, WA 98057", "eagles": false, "away_no": 7, "home_no": 4}, {"date": "2027-02-24", "display": "Wed, Feb 24, 2027", "away": "Eagles 1", "home": "Eagles Nest", "loc": "Eagles", "addr": "220 Wells Ave S, Renton, WA 98057", "eagles": true, "away_no": 3, "home_no": 9}, {"date": "2027-02-24", "display": "Wed, Feb 24, 2027", "away": "Project 8", "home": "Doofers II", "loc": "Doofers", "addr": "16430 SE 128th St, Renton, WA 98059", "eagles": false, "away_no": 1, "home_no": 6}, {"date": "2027-02-24", "display": "Wed, Feb 24, 2027", "away": "Sinful Strokes", "home": "Duck Fitty", "loc": "Christys", "addr": "1055 NE Sunset Blvd, Renton, WA 98056", "eagles": false, "away_no": 5, "home_no": 7}, {"date": "2027-02-24", "display": "Wed, Feb 24, 2027", "away": "OG's", "home": "Old School Players", "loc": "JP's Barroom", "addr": "214 Williams Ave S, Renton, WA 98057", "eagles": false, "away_no": 4, "home_no": 8}];
+const byes = [{"date": "2026-10-07", "display": "Wed, Oct 7, 2026", "team": "Eagles 1"}, {"date": "2026-10-14", "display": "Wed, Oct 14, 2026", "team": "OG's"}, {"date": "2026-10-21", "display": "Wed, Oct 21, 2026", "team": "Sinful Strokes"}, {"date": "2026-10-28", "display": "Wed, Oct 28, 2026", "team": "Doofers II"}, {"date": "2026-11-04", "display": "Wed, Nov 4, 2026", "team": "Duck Fitty"}, {"date": "2026-11-11", "display": "Wed, Nov 11, 2026", "team": "Old School Players"}, {"date": "2026-11-18", "display": "Wed, Nov 18, 2026", "team": "Eagles Nest"}, {"date": "2026-12-02", "display": "Wed, Dec 2, 2026", "team": "Project 8"}, {"date": "2026-12-09", "display": "Wed, Dec 9, 2026", "team": "Popcorn"}, {"date": "2026-12-16", "display": "Wed, Dec 16, 2026", "team": "Eagles 1"}, {"date": "2027-01-06", "display": "Wed, Jan 6, 2027", "team": "OG's"}, {"date": "2027-01-13", "display": "Wed, Jan 13, 2027", "team": "Sinful Strokes"}, {"date": "2027-01-20", "display": "Wed, Jan 20, 2027", "team": "Doofers II"}, {"date": "2027-01-27", "display": "Wed, Jan 27, 2027", "team": "Duck Fitty"}, {"date": "2027-02-03", "display": "Wed, Feb 3, 2027", "team": "Old School Players"}, {"date": "2027-02-10", "display": "Wed, Feb 10, 2027", "team": "Eagles Nest"}, {"date": "2027-02-17", "display": "Wed, Feb 17, 2027", "team": "Project 8"}, {"date": "2027-02-24", "display": "Wed, Feb 24, 2027", "team": "Popcorn"}];
+
+const schedule = document.getElementById('schedule');
+const site = document.getElementById('site');
+const date = document.getElementById('date');
+const loc = document.getElementById('loc');
+const q = document.getElementById('q');
+
+const dateOrder = [...new Set(rows.map(x => x.date))];
+const locationOrder = [...new Set(rows.map(x => x.loc))];
+
+dateOrder.forEach(d => date.add(new Option(
+  new Date(d + "T12:00:00").toLocaleDateString(undefined, {weekday:"long", month:"long", day:"numeric", year:"numeric"}), d
+)));
+locationOrder.sort().forEach(x => loc.add(new Option(x, x)));
+
+function locationText(x) {
+  const teams = new Set([x.away, x.home]);
+  if (teams.has("Eagles Nest") && teams.has("Eagles 1") && x.loc === "Eagles") {
+    return x.home === "Eagles Nest"
+      ? "Eagles (Eagles Nest HOME / Eagles 1 AWAY)"
+      : "Eagles (Eagles 1 HOME / Eagles Nest AWAY)";
+  }
+  return x.loc;
+}
+
+function isSiteGame(x) {
+  return x.away === site.value || x.home === site.value;
+}
+
+function render() {
+  const filtered = rows.filter(x =>
+    (site.value === "all" || isSiteGame(x)) &&
+    (!date.value || x.date === date.value) &&
+    (!loc.value || x.loc === loc.value) &&
+    (!q.value || [x.display,x.away,x.home,x.loc,x.addr].join(" ").toLowerCase().includes(q.value.toLowerCase()))
+  );
+
+  const grouped = {};
+  filtered.forEach(x => (grouped[x.date] ||= []).push(x));
+
+  let out = "";
+  Object.keys(grouped).sort().forEach(d => {
+    const games = grouped[d];
+    const display = games[0].display;
+    out += `<section class="date-card">
+      <div class="date-head"><span>📅 ${display}</span><span class="count">${games.length} game${games.length===1?"":"s"}</span></div>
+      <div class="game-grid">`;
+    games.forEach(x => {
+      const eagleGame = x.away === "Eagles Nest" || x.home === "Eagles Nest" || x.away === "Eagles 1" || x.home === "Eagles 1";
+      const sameEagles = new Set([x.away,x.home]).size === 2 && [x.away,x.home].includes("Eagles Nest") && [x.away,x.home].includes("Eagles 1");
+      out += `<div class="game ${eagleGame ? "eagles-game" : ""}">
+        <div class="matchup">${x.away} <span class="vs">vs.</span> ${x.home}${eagleGame ? '<span class="site-tag">EAGLES</span>' : ''}</div>
+        <div class="loc">📍 ${locationText(x)}</div>
+        <div class="addr">${x.addr}</div>
+        ${sameEagles ? `<div class="same-site">🏠 Same Eagles location — home/away shown above.</div>` : ""}
+      </div>`;
+    });
+    out += `</div></section>`;
+  });
+
+  if (!out) out = `<div class="empty">No games match your filters.</div>`;
+
+  // Show relevant bye information when a single Eagles site is selected.
+  if (site.value !== "all") {
+    const bye = byes.filter(x => x.team === site.value && (!date.value || x.date === date.value));
+    if (bye.length) {
+      out += `<div class="bye">⏸️ ${site.value} BYE: ${bye.map(x=>x.display).join(" • ")}</div>`;
+    }
+  }
+  schedule.innerHTML = out;
+}
+
+[site,date,loc,q].forEach(el => el.addEventListener('input', render));
+render();
+</script>
+</body>
+</html>
